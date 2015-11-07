@@ -1,0 +1,24 @@
+# == Schema Information
+#
+# Table name: user_cards
+#
+#  id         :integer          not null, primary key
+#  user_id    :integer
+#  card_id    :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  e_factor   :decimal(, )
+#  interval   :integer
+#  due_date   :date
+#  repetition :integer
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 
+  card_id: 
+
+two:
+  user_id: 
+  card_id: 
