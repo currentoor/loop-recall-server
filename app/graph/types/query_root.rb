@@ -28,7 +28,7 @@ QueryRoot = GraphQL::ObjectType.define do
     type types[CardType]
     argument :deck_id, !types.ID
     resolve -> (object, arguments, context) {
-      Card.where(arguments["deck_id"])
+      Card.where(deck_id: arguments["deck_id"])
     }
   end
 
