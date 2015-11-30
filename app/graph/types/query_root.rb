@@ -19,7 +19,8 @@ QueryRoot = GraphQL::ObjectType.define do
   field :dueCards do
     type types[CardType]
     resolve -> (object, arguments, context) {
-      ucs = UserCard.where("due_date <= ?", Date.today)
+      user = context[:current_user]
+      ucs = UserCard.where(user: user).where("due_date <= ?", Date.today)
       ucs.map(&:card)
     }
   end
@@ -28,14 +29,17 @@ QueryRoot = GraphQL::ObjectType.define do
     type types[CardType]
     argument :deck_id, !types.ID
     resolve -> (object, arguments, context) {
-      Card.where(deck_id: arguments["deck_id"])
+      user = context[:current_user]
+      Card.where(user: user).where(deck_id: arguments["deck_id"])
     }
   end
 
   field :decks do
     type types[DeckType]
     resolve -> (object, arguments, context) {
-      Deck.all
+      user = context[:current_user]
+      uds = UserDeck.where(user: user)
+      uds.map(&:deck)
     }
   end
 

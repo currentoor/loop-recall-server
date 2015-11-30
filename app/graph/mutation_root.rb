@@ -14,19 +14,17 @@ MutationRoot = GraphQL::ObjectType.define do
   # end
 
   field :createCard, CardType do
-    argument :user_id, !types.ID
     argument :deck_id, !types.ID
     argument :question, !types.String
     argument :answer, !types.String
     resolve -> (object, args, context) {
       Card.transaction do
-        user_id, deck_id, question, answer = [
-          args['user_id'],
+        deck_id, question, answer = [
           args['deck_id'],
           args['question'],
           args['answer']
         ]
-        user = User.find(user_id)
+        user = context[:current_user]
 
         Card.create!(
           deck_id: deck_id,
@@ -51,8 +49,9 @@ MutationRoot = GraphQL::ObjectType.define do
         args['question'],
         args['answer']
       ]
+      user = context[:current_user]
 
-      Card.find(id).tap do |card|
+      UserCard.find_by(user: user, card_id: id).card.tap do |card|
         card.question = question if question
         card.answer = answer if answer
         card.deck_id = deck_id if deck_id
@@ -63,16 +62,15 @@ MutationRoot = GraphQL::ObjectType.define do
 
   field :answerCard, UserCardType do
     argument :card_id, !types.ID
-    argument :user_id, !types.ID
     argument :response, !types.Int
     resolve -> (object, args, context) {
-      card_id, user_id, response = [
+      card_id, response = [
         args['card_id'],
-        args['user_id'],
         args['response']
       ]
+      user = context[:current_user]
 
-      uc = UserCard.where(card_id: card_id, user_id: user_id).first
+      uc = UserCard.find_by(card_id: card_id, user: user)
       uc.answer!(response)
       uc
     }
@@ -81,18 +79,22 @@ MutationRoot = GraphQL::ObjectType.define do
   field :deleteCard, CardType do
     argument :id, !types.ID
     resolve -> (object, args, context) {
+      user = context[:current_user]
       id = args['id']
-      Card.find(id).destroy
+
+      UserCard.find_by(user: user, card_id: id).card.destroy
     }
   end
 
   field :createDeck, DeckType do
-    # Ex: "mutation bar { createDeck(name: \"clojure\" user_id: \"1\") {id, name} }"
+    # Ex: "mutation bar { createDeck(name: \"clojure\") {id, name} }"
     argument :user_id, !types.ID
     argument :name, !types.String
     resolve -> (object, args, context) {
+      user = context[:current_user]
+
       Deck.transaction do
-        user = User.find(args['user_id'])
+        user = context[:current_user]
 
         Deck.create!(
           name: args['name']
@@ -112,8 +114,9 @@ MutationRoot = GraphQL::ObjectType.define do
         args['id'],
         args['name']
       ]
+      user = context[:current_user]
 
-      Deck.find(id).tap do |deck|
+      UserDeck.find_by(deck_id: id, user: user).deck.tap do |deck|
         deck.name = name
         deck.save!
       end
@@ -124,8 +127,10 @@ MutationRoot = GraphQL::ObjectType.define do
     # Ex: "mutation bar { deleteDeck(id: \"1\") {id} }"
     argument :id, !types.ID
     resolve -> (object, args, context) {
+      user = context[:current_user]
       id = args['id']
-      Deck.find(id).destroy
+
+      UserDeck.find_by(deck_id: id, user: user).deck.destroy
     }
   end
 end

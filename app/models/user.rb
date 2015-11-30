@@ -5,6 +5,7 @@
 #  id         :integer          not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  email      :string
 #
 
 class User < ActiveRecord::Base
@@ -12,4 +13,6 @@ class User < ActiveRecord::Base
   has_many :user_decks, dependent: :destroy
   has_many :cards, through: :user_cards, dependent: :destroy
   has_many :decks, through: :user_decks, dependent: :destroy
+
+  validates :auth0id, presence: true
 end
