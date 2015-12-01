@@ -1,6 +1,6 @@
 class GraphQlController < ApplicationController
   skip_before_filter :verify_authenticity_token
-  before_action :authenticate
+  before_action :authenticate, except: [:index]
 
   def query
     query_string = params[:query]
@@ -22,6 +22,9 @@ class GraphQlController < ApplicationController
     )
 
     render transit: mutation.result
+  end
+
+  def index
   end
 end
 
