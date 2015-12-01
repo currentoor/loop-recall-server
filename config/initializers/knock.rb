@@ -33,6 +33,7 @@ Knock.setup do |config|
     user = User.find_by_auth0id claims['sub']
     if user.blank? && claims['sub'].present?
       user = User.create!(auth0id: claims['sub'])
+      user.load_sample_data
     end
     user
   }
