@@ -88,14 +88,11 @@ MutationRoot = GraphQL::ObjectType.define do
 
   field :createDeck, DeckType do
     # Ex: "mutation bar { createDeck(name: \"clojure\") {id, name} }"
-    argument :user_id, !types.ID
     argument :name, !types.String
     resolve -> (object, args, context) {
       user = context[:current_user]
 
       Deck.transaction do
-        user = context[:current_user]
-
         Deck.create!(
           name: args['name']
         ).tap do |deck|
