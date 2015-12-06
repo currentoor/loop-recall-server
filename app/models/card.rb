@@ -27,4 +27,17 @@ class Card < ActiveRecord::Base
       '???'
     end
   end
+
+  def destroy(user=nil)
+    return super() if user.blank?
+
+    ucs = UserCard.where(card: self)
+
+    if ucs.size == 1
+      super()
+    else
+      UserCard.find_by(card: self, user: user).destroy
+      self
+    end
+  end
 end

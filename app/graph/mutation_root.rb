@@ -71,7 +71,7 @@ MutationRoot = GraphQL::ObjectType.define do
       user = context[:current_user]
       id = args['id']
 
-      UserCard.find_by(user: user, card_id: id).card.destroy
+      UserCard.find_by(user: user, card_id: id).card.destroy(user)
     }
   end
 
@@ -116,7 +116,7 @@ MutationRoot = GraphQL::ObjectType.define do
       user = context[:current_user]
       id = args['id']
 
-      UserDeck.find_by(deck_id: id, user: user).deck.destroy
+      UserDeck.find_by(deck_id: id, user: user).deck.destroy(user)
     }
   end
 end
