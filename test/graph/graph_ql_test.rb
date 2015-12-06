@@ -45,12 +45,26 @@ class GraphQlTest < ActiveSupport::TestCase
   end
 
   test 'should create card' do
+    other_user = User.create!(auth0id: 'other_guy')
+
+    other_user.share_decks(@user.decks)
+
+    prev_card_count = @user.cards.count
+    assert_equal @user.cards, other_user.cards
+    assert_equal @user.decks, other_user.decks
+
     m = "mutation bar { createCard(deck_id: #{@clojure.id},question: \"who?\", answer: \"me!\") {question, answer} }"
     result = mutation m
 
     expected = {"data"=>{"createCard"=>{"question"=>"who?", "answer"=>"me!"}}}
 
     assert_equal expected, result
+
+    new_card_count = @user.cards.count
+
+    assert_equal @user.cards, other_user.cards
+    assert_equal @user.decks, other_user.decks
+    assert_equal prev_card_count + 1, new_card_count
   end
 
   test 'should update card' do
