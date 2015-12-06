@@ -12,7 +12,7 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   test "importing old data" do
-    user = User.create(auth0id: 'foobar')
+    user = User.create!(auth0id: 'foobar')
 
     user.load_old_data(old_data)
     user.reload
@@ -20,6 +20,33 @@ class UserTest < ActiveSupport::TestCase
     decks = user.decks.count
     deck_cards = user.decks.map(&:cards).map(&:count)
     cards = user.cards.count
+
+    assert_equal 3, decks
+    assert_equal [1, 1, 2], deck_cards
+    assert_equal 4, cards
+  end
+
+  test "sharing" do
+    user = User.create!(auth0id: 'foo')
+    user.load_old_data(old_data)
+
+    other_user = User.create!(auth0id: 'bar')
+
+    other_user.share_decks(user.decks)
+
+    # user is not affected
+    decks = user.decks.count
+    deck_cards = user.decks.map(&:cards).map(&:count)
+    cards = user.cards.count
+
+    assert_equal 3, decks
+    assert_equal [1, 1, 2], deck_cards
+    assert_equal 4, cards
+
+    # other_user is affected
+    decks = other_user.decks.count
+    deck_cards = other_user.decks.map(&:cards).map(&:count)
+    cards = other_user.cards.count
 
     assert_equal 3, decks
     assert_equal [1, 1, 2], deck_cards

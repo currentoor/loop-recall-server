@@ -15,10 +15,9 @@ class User < ActiveRecord::Base
   has_many :cards, through: :user_cards, dependent: :destroy
   has_many :decks, through: :user_decks, dependent: :destroy
 
-  validates :auth0id, presence: true
+  validates :auth0id, presence: true, uniqueness: true
 
   def load_old_data(data)
-    data = JSON.parse(data)
     data = nest_data(data)
 
     data.each do |deck_data|
@@ -42,6 +41,18 @@ class User < ActiveRecord::Base
           due_date: Date.parse(card_data['due_date'])
         )
       end
+    end
+  end
+
+  def share_decks(decks)
+    decks.each do |deck|
+      self.decks << deck
+
+      deck.cards.each do |card|
+        self.cards << card
+      end
+
+      self.save!
     end
   end
 
