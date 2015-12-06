@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   end
 
   def sample_decks
-    [clojure_deck, urdu_deck, ruby_deck, hindi_deck]
+    [clojure_deck, punjabi_deck, urdu_deck, ruby_deck, hindi_deck]
   end
 
   def urdu_deck
@@ -74,6 +74,13 @@ class User < ActiveRecord::Base
     {name: 'Hindi', cards:
     [{"answer"=>"surprise party ki yojna bnai, made a plan for a surprise party", "question"=>"सरप्राइज़ पार्टी की योजना बनाई"},
     {"answer"=>"lad piya se bigadna, to spoil by pampering", "question"=>"लाड़-प्यार से बिगाड़ना"}]
+    }
+  end
+
+  def punjabi_deck
+    {name: 'Punjabi', cards:
+    [{"answer"=>"viakrn, grammar", "question"=>"ਵਿਆਕਰਣ"},
+    {"answer"=>"anuvadk, translator", "question"=>"ਅਨੁਵਾਦਕ"}]
     }
   end
 end
