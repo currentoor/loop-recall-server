@@ -17,6 +17,34 @@ class User < ActiveRecord::Base
 
   validates :auth0id, presence: true
 
+  def load_old_data(data)
+    data = JSON.parse(data)
+    data = nest_data(data)
+
+    data.each do |deck_data|
+      deck = Deck.create!(name: deck_data['name'])
+
+      self.decks << deck
+
+      deck_data['cards'].each do |card_data|
+        card = Card.create!(
+          deck_id: deck.id,
+          question: ghetto_escape(card_data['question']),
+          answer: ghetto_escape(card_data['answer'])
+        )
+
+        UserCard.create!(
+          card_id: card.id,
+          user_id: self.id,
+          repetition: card_data['repetition_count'],
+          interval: card_data['interval'],
+          e_factor: card_data['e_factor'],
+          due_date: Date.parse(card_data['due_date'])
+        )
+      end
+    end
+  end
+
   def load_sample_data
     sample_decks.each do |deck_data|
       deck = Deck.create!(name: deck_data[:name])
@@ -25,8 +53,8 @@ class User < ActiveRecord::Base
       deck_data[:cards].each do |card_data|
         card = Card.create!(
           deck_id: deck.id,
-          question: card_data['question'],
-          answer: card_data['answer']
+          question: ghetto_escape(card_data['question']),
+          answer: ghetto_escape(card_data['answer'])
         )
         self.cards << card
       end
@@ -82,5 +110,19 @@ class User < ActiveRecord::Base
     [{"answer"=>"viakrn, grammar", "question"=>"ਵਿਆਕਰਣ"},
     {"answer"=>"anuvadk, translator", "question"=>"ਅਨੁਵਾਦਕ"}]
     }
+  end
+
+  private
+
+  def ghetto_escape(s)
+    s.gsub(/\\\\\\"/, '__999__').gsub(/\\\\"/, '__888__').gsub(/\\"/, '__777__').gsub(/"/, '__666__')
+  end
+
+  def nest_data(data)
+    result = data['decks']
+
+    result.each do |deck|
+      deck['cards'] = data['cards'].select { |c| c['decks_id'] == deck['id'] }
+    end
   end
 end
