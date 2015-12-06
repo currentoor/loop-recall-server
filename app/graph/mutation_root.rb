@@ -13,14 +13,22 @@ MutationRoot = GraphQL::ObjectType.define do
           args['question'],
           args['answer']
         ]
-        user = context[:current_user]
+        current_user = context[:current_user]
 
-        Card.create!(
-          deck_id: deck_id,
-          question: question,
-          answer: answer
-        ).tap do |card|
-          user.cards << card
+        if UserDeck.find_by(user: current_user, deck_id: deck_id)
+          card = Card.create!(
+            deck_id: deck_id,
+            question: question,
+            answer: answer
+          )
+
+          all_users = UserDeck.where(deck_id: deck_id)
+
+          all_users.map(&:user).each do |user|
+            user.cards << card
+          end
+
+          card
         end
       end
     }
