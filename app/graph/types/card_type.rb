@@ -6,4 +6,5 @@ CardType = GraphQL::ObjectType.define do
   field :question, !types.String
   field :answer, !types.String
   field :deck, !DeckType
+  field :correct_interval, !types.String
 end

@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
     {name: 'Ruby', cards:
     [
       {"answer"=>
-        "*Private* methods can only be called on an implicit receiver whereas *protected* methods can only be called in the scope of any object belonging to the same class as the receiver.\n```ruby\nclass Person\n  def older_than?(other_person)\n    age > other_person.age\n  end\n  protected\n  def age\n    @age\n  end\nend\n```",
+        "*Private* methods can only be called on an implicit receiver whereas *protected* methods can only be called in the scope of any object belonging to the same class as the receiver.\n```ruby\nclass Person\n  def older_than?(other_person)\n    age > other_person.age\n  end\n\n  protected\n\n  def age\n    @age\n  end\nend\n```",
       "question"=>"What is the difference between *private* and *protected* methods?"},
         {"answer"=>
           "The superclass-copy of `B` keeps track of what objects get added directly to `B`. So yes if the methods are added to `B` but not if they are added indirectly (e.g. in a module that was included in `B`).",
@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
       "A macro for implementing a protocol, good for when you want to inline the protocol function definitions.\n```clojure\n(defrecord Banana [qty])\n;;; 'subtotal' differ from each fruit.\n(defprotocol Fruit\n  (subtotal [item]))\n(extend-type Banana\n  Fruit\n  (subtotal [item]\n    (* 158 (:qty item))))\n```",
     "question"=>"What is `extend-type` and when is it useful over `extend`?"},
       {"answer"=>
-        "Same for `->>`\n```clojure\n(cond-> 1          ; we start with 1\n    true inc       ; the condition is true so (inc 1) => 2\n    false (* 42)   ; the condition is false so the operation is skipped\n    (= 2 2) (* 3)) ; (= 2 2) is true so (* 2 3) => 6 \n;;=> 6\n```",
+        "Same for `->>`\n```clojure\n(cond-> 1          ; we start with 1\n    true inc       ; the condition is true so (inc 1) => 2\n    false (* 42)   ; condition is false so skipped\n    (= 2 2) (* 3)) ; (= 2 2) is true so (* 2 3) => 6 \n;;=> 6\n```",
       "question"=>"How should you thread, `->`/`->>`, an expression through the forms of a `cond`?"},
       {"answer"=>
         "They bundle operation and case discrimination together. It's easy to add new operation on existing types but it's hard to add new types over existing behavior. Usually requires adding to a `case` statement in the target operation.",

@@ -2,17 +2,6 @@ MutationRoot = GraphQL::ObjectType.define do
   name "Mutation"
   description "The mutation root for this schema"
 
-  # field :createUser, UserType do
-  #   argument :email, !types.String
-  #   argument :password, !types.String
-  #   resolve -> (object, args, context) {
-  #     User.create(
-  #       email: args["email"],
-  #       password: args["password"],
-  #     )
-  #   }
-  # end
-
   field :createCard, CardType do
     argument :deck_id, !types.ID
     argument :question, !types.String

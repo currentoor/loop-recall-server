@@ -26,11 +26,15 @@ class UserCard < ActiveRecord::Base
     end
   end
 
+  def correct_interval
+    new_interval(self.repetition, self.interval, self.e_factor)
+  end
+
   def sm2_defaults
-    self.e_factor = 2.5
-    self.interval = 1
-    self.due_date = Date.today
-    self.repetition = 1
+    self.e_factor ||= 2.5
+    self.interval ||= 1
+    self.due_date ||= Date.today
+    self.repetition ||= 1
   end
 
   def due_date_str
@@ -44,7 +48,7 @@ class UserCard < ActiveRecord::Base
       self.interval = 1
       self.due_date = Date.today + 1
     else
-      self.interval = new_interval(self.repetition+1, self.interval, self.e_factor)
+      self.interval = new_interval(self.repetition, self.interval, self.e_factor)
       self.due_date = Date.today + self.interval
       self.repetition += 1
       self.e_factor = new_e_factor(self.e_factor, resp)

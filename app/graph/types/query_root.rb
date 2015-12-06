@@ -21,7 +21,10 @@ QueryRoot = GraphQL::ObjectType.define do
     resolve -> (object, arguments, context) {
       user = context[:current_user]
       ucs = UserCard.where(user: user).where("due_date <= ?", Date.today)
-      ucs.map(&:card)
+      cards = ucs.map(&:card)
+      cards.tap do |cs|
+        cs.each { |c| c.user_id = user.id }
+      end
     }
   end
 
