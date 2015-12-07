@@ -20,8 +20,11 @@ QueryRoot = GraphQL::ObjectType.define do
     type types[CardType]
     resolve -> (object, arguments, context) {
       user = context[:current_user]
-      ucs = UserCard.where(user: user).where("due_date <= ?", Date.today)
-      cards = ucs.map(&:card)
+      ucs = UserCard.includes(:card).where(user: user).where("due_date <= ?", Date.today)
+
+      deck_ids = UserDeck.where(user: user).map(&:deck_id)
+
+      cards = ucs.map(&:card).select { |c| deck_ids.include? c.deck_id }
       cards.tap do |cs|
         cs.each { |c| c.user_id = user.id }
       end
