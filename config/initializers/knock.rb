@@ -30,12 +30,14 @@ Knock.setup do |config|
   ##
   ## Default:
   config.current_user_from_token = -> (claims) {
-    user = User.find_by_auth0id claims['sub']
-    if user.blank? && claims['sub'].present?
-      user = User.create!(auth0id: claims['sub'])
-      user.load_sample_data
+    ActiveRecord::Base.transaction do
+      user = User.find_by_auth0id claims['sub']
+      if user.blank? && claims['sub'].present?
+        user = User.create!(auth0id: claims['sub'])
+        user.load_sample_data
+      end
+      user
     end
-    user
   }
 
   ## Expiration claim
