@@ -30,7 +30,7 @@ QueryRoot = GraphQL::ObjectType.define do
 
       old_cards = cards.select { |uc| uc.created_at != uc.updated_at }
       # Only 10 new cards a day, for moral.
-      new_cards = cards.select { |uc| uc.created_at == uc.updated_at }.first(10)
+      new_cards = cards.select { |uc| uc.created_at == uc.updated_at }.sample(10)
 
       old_cards.concat(new_cards).tap do |cs|
         cs.each { |c| c.user_id = user.id }
