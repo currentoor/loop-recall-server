@@ -20,12 +20,19 @@ QueryRoot = GraphQL::ObjectType.define do
     type types[CardType]
     resolve -> (object, arguments, context) {
       user = context[:current_user]
-      ucs = UserCard.includes(:card).where(user: user).where("due_date <= ?", Date.today)
+      ucs = UserCard.includes(:card).
+        where(user: user).
+        where("due_date <= ?", Date.today)
 
       deck_ids = UserDeck.where(user: user).map(&:deck_id)
 
       cards = ucs.map(&:card).select { |c| deck_ids.include? c.deck_id }
-      cards.tap do |cs|
+
+      old_cards = cards.select { |uc| uc.created_at != uc.updated_at }
+      # Only 10 new cards a day, for moral.
+      new_cards = cards.select { |uc| uc.created_at == uc.updated_at }.first(10)
+
+      old_cards.concat(new_cards).tap do |cs|
         cs.each { |c| c.user_id = user.id }
       end
     }
