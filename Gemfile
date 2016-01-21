@@ -5,6 +5,9 @@ ruby "2.2.2"
 # Webserver
 gem 'puma'
 
+gem 'activeadmin', github: 'activeadmin'
+gem 'devise'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.4'
 # Use pg as the database for Active Record

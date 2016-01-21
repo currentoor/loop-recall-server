@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
   root 'graph_ql#index'
   get 'graph_ql/query'
   post 'graph_ql/mutation'

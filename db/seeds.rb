@@ -8,3 +8,4 @@
 
 
 User.create
+AdminUser.create!(email: 'currentoor@gmail.com', password: 'smile909', password_confirmation: 'smile909')
